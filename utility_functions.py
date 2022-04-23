@@ -6,11 +6,20 @@ from scipy import signal
 from scipy.fft import rfft, rfftfreq, irfft
 import os
 
+def gaussian(x, peak, mean, std):
+    return peak * np.exp(-(x-mean)**2/(2*std**2))
+
+def band_pass_butterworth(order, cutoff, sample_rate):
+    nyq = 0.5 * sample_rate
+    low = cutoff[0] / nyq
+    high = cutoff[1] / nyq
+    return signal.butter(order, [low, high], analog=False, btype='band', output='sos')
+
 def high_pass_butterworth(order, cutoff, sample_rate):
-    return signal.butter(order, cutoff, output='sos', fs=sample_rate)
+    return signal.butter(order, cutoff, analog=False, output='sos', fs=sample_rate)
 
 def low_pass_butterworth(order, cutoff, sample_rate):
-    return signal.butter(order, cutoff, output='sos', fs=sample_rate)
+    return signal.butter(order, cutoff, analog=False, output='sos', fs=sample_rate)
 
 def butter_data(data, filter, order, cutoff, sample_rate=20000):
     # applies filter(order, cutoff, sample_rate) to data
